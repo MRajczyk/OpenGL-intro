@@ -7,13 +7,11 @@ from OpenGL.GLU import *
 import time
 import math
 
-# Inicjalizacja czasu
 time_start = time.time()
 camera_distance = 500
 m_angle1 = 0
 m_angle2 = -90
 
-# Wczytanie tekstury
 def load_texture(image_path):
     texture_surface = pygame.image.load(image_path)
     texture_data = pygame.image.tostring(texture_surface, "RGBA", True)
@@ -26,7 +24,6 @@ def load_texture(image_path):
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
     return texture_id
 
-# Rysowanie kuli z teksturą
 def draw_textured_sphere(texture_id, radius=5):
     quad = gluNewQuadric()
     glBindTexture(GL_TEXTURE_2D, texture_id)
@@ -41,7 +38,6 @@ def draw_textured_sphere(texture_id, radius=5):
     glDisable(GL_TEXTURE_2D)
     gluDeleteQuadric(quad)
 
-# Rysowanie pierścieni Saturna
 def draw_saturn_rings(inner_radius, outer_radius, num_segments=100):
     glColor3f(0.8, 0.7, 0.5)
     glBegin(GL_TRIANGLE_STRIP)
@@ -53,7 +49,6 @@ def draw_saturn_rings(inner_radius, outer_radius, num_segments=100):
         glVertex3f(x * outer_radius, 0, z * outer_radius)
     glEnd()
 
-# Rysowanie orbity jako okręgu
 def draw_orbit(radius):
     glColor3f(1.0, 1.0, 1.0)
     glBegin(GL_LINE_LOOP)
@@ -69,28 +64,30 @@ gluPerspective(45, (display[0] / display[1]), 0.1, 500.0)
 glTranslatef(0.0, 0.0, -200)
 glEnable(GL_DEPTH_TEST)
 
-sun_texture = load_texture("sun_texture.jpg")  # Wczytaj teksturę Słońca
-mercury_texture = load_texture("mercury_texture.jpg")  # Wczytaj teksturę Ziemi
-venus_texture = load_texture("venus_texture.jpg")  # Wczytaj teksturę Wenus
-earth_texture = load_texture("earth_texture.jpg")  # Wczytaj teksturę Ziemi
-mars_texture = load_texture("mars_texture.jpg")  # Wczytaj teksturę Marsa
-jupiter_texture = load_texture("jupiter_texture.jpg")  # Wczytaj teksturę Jowisza
-saturn_texture = load_texture("saturn_texture.jpg")  # Wczytaj teksturę Saturna
-uranus_texture = load_texture("uranus_texture.jpg")  # Wczytaj teksturę Urana
-neptune_texture = load_texture("neptune_texture.jpg")  # Wczytaj teksturę Neptuna
+sun_texture = load_texture("sun_texture.jpg")
+mercury_texture = load_texture("mercury_texture.jpg")
+venus_texture = load_texture("venus_texture.jpg")
+earth_texture = load_texture("earth_texture.jpg")
+mars_texture = load_texture("mars_texture.jpg")
+jupiter_texture = load_texture("jupiter_texture.jpg")
+saturn_texture = load_texture("saturn_texture.jpg")
+uranus_texture = load_texture("uranus_texture.jpg")
+neptune_texture = load_texture("neptune_texture.jpg")
 
-# Ustawienie źródła światła
 glEnable(GL_LIGHTING)
 glEnable(GL_LIGHT0)
 glLightfv(GL_LIGHT0, GL_POSITION, [0, 0, 0, 1])
-glLightfv(GL_LIGHT0, GL_DIFFUSE, [1.0, 1.0, 0.8, 1.0])
+glLightfv(GL_LIGHT0, GL_AMBIENT, [0.1, 0.1, 0.1, 1.0])
+glLightModelfv(GL_LIGHT_MODEL_AMBIENT, [0.05, 0.05, 0.05, 1.0])
+glMaterialfv(GL_FRONT, GL_AMBIENT, [0.2, 0.2, 0.2, 1.0])
+glShadeModel(GL_SMOOTH)
 
 m_LeftDownPos = (0, 0)
 m_LeftButtonDown = False
 
 while True:
     time_elapsed = time.time() - time_start
-    planet_rotation = time_elapsed * 10  # Rotacja wokół własnej osi
+    planet_rotation = time_elapsed * 10
     sun_rotation = time_elapsed * 5
     orbit_angle_mercury = time_elapsed * 30
     orbit_angle_venus = time_elapsed * 25
@@ -136,7 +133,6 @@ while True:
     glRotated(m_angle1, 0, 1, 0)
     glRotated(m_angle2, 1, 0, 0)
 
-    # Rysowanie orbit
     glDisable(GL_LIGHTING)
     draw_orbit(orbit_radius_mercury)
     draw_orbit(orbit_radius_venus)
@@ -148,7 +144,6 @@ while True:
     draw_orbit(orbit_radius_neptune)
     glEnable(GL_LIGHTING)
 
-    # Rysowanie centralnej kuli (Słońce) jako źródło światła
     glPushMatrix()
     glDisable(GL_LIGHTING)
     glRotatef(-sun_rotation, 0, 1, 0)
@@ -156,7 +151,6 @@ while True:
     glEnable(GL_LIGHTING)
     glPopMatrix()
 
-    # Rysowanie Merkurego
     glPushMatrix()
     x = math.cos(math.radians(orbit_angle_mercury)) * orbit_radius_mercury
     z = math.sin(math.radians(orbit_angle_mercury)) * orbit_radius_mercury
@@ -165,7 +159,6 @@ while True:
     draw_textured_sphere(mercury_texture, 3)
     glPopMatrix()
 
-    # Rysowanie Wenus
     glPushMatrix()
     x = math.cos(math.radians(orbit_angle_venus)) * orbit_radius_venus
     z = math.sin(math.radians(orbit_angle_venus)) * orbit_radius_venus
@@ -174,7 +167,6 @@ while True:
     draw_textured_sphere(venus_texture, 4)
     glPopMatrix()
 
-    # Rysowanie Ziemi
     glPushMatrix()
     x = math.cos(math.radians(orbit_angle_earth)) * orbit_radius_earth
     z = math.sin(math.radians(orbit_angle_earth)) * orbit_radius_earth
@@ -183,7 +175,6 @@ while True:
     draw_textured_sphere(earth_texture, 5)
     glPopMatrix()
 
-    # Rysowanie Marsa
     glPushMatrix()
     x = math.cos(math.radians(orbit_angle_mars)) * orbit_radius_mars
     z = math.sin(math.radians(orbit_angle_mars)) * orbit_radius_mars
@@ -192,7 +183,6 @@ while True:
     draw_textured_sphere(mars_texture, 4)
     glPopMatrix()
 
-    # Rysowanie Jowisza
     glPushMatrix()
     x = math.cos(math.radians(orbit_angle_jupiter)) * orbit_radius_jupiter
     z = math.sin(math.radians(orbit_angle_jupiter)) * orbit_radius_jupiter
@@ -201,7 +191,6 @@ while True:
     draw_textured_sphere(jupiter_texture, 12)
     glPopMatrix()
 
-    # Rysowanie Saturna
     glPushMatrix()
     x = math.cos(math.radians(orbit_angle_saturn)) * orbit_radius_saturn
     z = math.sin(math.radians(orbit_angle_saturn)) * orbit_radius_saturn
@@ -211,7 +200,6 @@ while True:
     draw_saturn_rings(14, 18)
     glPopMatrix()
 
-    # Rysowanie Urana
     glPushMatrix()
     x = math.cos(math.radians(orbit_angle_uranus)) * orbit_radius_uranus
     z = math.sin(math.radians(orbit_angle_uranus)) * orbit_radius_uranus
@@ -224,7 +212,6 @@ while True:
     glPopMatrix()
     glPopMatrix()
 
-    # Rysowanie Neptuna
     glPushMatrix()
     x = math.cos(math.radians(orbit_angle_neptune)) * orbit_radius_neptune
     z = math.sin(math.radians(orbit_angle_neptune)) * orbit_radius_neptune
